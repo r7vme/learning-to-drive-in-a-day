@@ -33,6 +33,12 @@ Script does the following:
 - Learning function will collect the data by running 5 episodes w/o optimization, then after every episode DDPG and VAE optimization happens.
 - After 1000 steps training will be finished and weights params will be saved to files.
 
+# Troubleshooting
+
+## Disable VAE optimization
+
+Implementation is still very very raw and needs fine tuning, so to get quick results i recommend to run full session and then reuse `vae.json` in new training session by adding `vae.load(PATH_MODEL_VAE)` before `ddpg.learn` and commenting out `vae.optimize()` in `ddpg_with_vae.py`. This will allow to train DDPG very quickly even on CPU machine.
+
 # Credits
 
 - [wayve.ai](wayve.ai) for idea and inspiration.
