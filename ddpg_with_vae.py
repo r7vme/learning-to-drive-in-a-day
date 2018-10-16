@@ -1,10 +1,11 @@
+# Copyright (c) 2018 Roma Sokolkov
+# MIT License
+
 """
 DDPGWithVAE inherits DDPG from stable-baselines
 and reimplements learning method.
 """
 
-from functools import reduce
-import os
 import time
 
 import numpy as np
@@ -20,12 +21,12 @@ class DDPGWithVAE(DDPG):
 
     - Stop rollout on episode done.
     - More verbosity.
+    - Add VAE optimization step.
     """
-    def learn(self, total_timesteps, callback=None, vae=None):
+    def learn(self, total_timesteps, callback=None, vae=None, skip_episodes=5):
         rank = MPI.COMM_WORLD.Get_rank()
         # we assume symmetric actions.
         assert np.all(np.abs(self.env.action_space.low) == self.env.action_space.high)
-        print(self.env.action_space.shape)
 
         self.episode_reward = np.zeros((1,))
         with self.sess.as_default(), self.graph.as_default():
@@ -87,15 +88,16 @@ class DDPGWithVAE(DDPG):
                 print("rollout finished")
 
                 # Train VAE.
-                train_start = time.time()
-                vae.optimize()
-                print("VAR training duration:", time.time() - train_start)
+                if episodes > skip_episodes:
+                    train_start = time.time()
+                    vae.optimize()
+                    print("VAE training duration:", time.time() - train_start)
 
                 # Train DDPG.
                 actor_losses = []
                 critic_losses = []
                 train_start = time.time()
-                if episodes > 3:
+                if episodes > skip_episodes:
                     for t_train in range(self.nb_train_steps):
                         critic_loss, actor_loss = self._train_step(0, None, log=t_train == 0)
                         critic_losses.append(critic_loss)

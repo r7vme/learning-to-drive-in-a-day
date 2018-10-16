@@ -9,16 +9,16 @@ VAE models.
 import numpy as np
 import os
 import tensorflow as tf
-import random
 import json
 
-np.set_printoptions(precision=4, edgeitems=6, linewidth=100, suppress=True)
 
 def normalize(data):
     return data/255.0
 
+
 def denormalize(data):
     return data * 255.0
+
 
 class ConvVAE(object):
   def __init__(self, z_size=512, batch_size=100, learning_rate=0.0001, kl_tolerance=0.5, is_training=True, reuse=False, gpu_mode=True):

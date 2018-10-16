@@ -9,22 +9,26 @@ import numpy as np
 
 from .model import ConvVAE
 
+
 class VAEController:
-    def __init__(self):
+    def __init__(self, z_size=512, image_size=(80, 160, 3),
+                 learning_rate=0.0001, kl_tolerance=0.5,
+                 epoch_per_optimization=10, batch_size=64,
+                 buffer_size=500):
         # VAE input and output shapes
-        self.z_size = 512
-        self.image_size = (80, 160, 3)
+        self.z_size = z_size
+        self.image_size = image_size
 
         # VAE params
-        self.learning_rate = 0.0001
-        self.kl_tolerance=0.5
+        self.learning_rate = learning_rate
+        self.kl_tolerance = kl_tolerance
 
         # Training params
-        self.epoch_per_optimization = 10
-        self.batch_size = 64
+        self.epoch_per_optimization = epoch_per_optimization
+        self.batch_size = batch_size
 
         # Buffer
-        self.buffer_size = 500
+        self.buffer_size = buffer_size
         self.buffer_pos = -1
         self.buffer_reset()
 
@@ -52,10 +56,10 @@ class VAEController:
     def buffer_reset(self):
         self.buffer_pos = -1
         self.buffer = np.zeros((self.buffer_size,
-                                    self.image_size[0],
-                                    self.image_size[1],
-                                    self.image_size[2]),
-                                dtype=np.uint8)
+                                self.image_size[0],
+                                self.image_size[1],
+                                self.image_size[2]),
+                               dtype=np.uint8)
 
     def encode(self, arr):
         assert arr.shape == self.image_size
@@ -78,7 +82,8 @@ class VAEController:
 
     def optimize(self):
         ds = self.buffer[:self.buffer_pos]
-        self.buffer_reset()
+        # TODO: may be do buffer reset.
+        # self.buffer_reset()
 
         num_batches = int(np.floor(len(ds)/self.batch_size))
 
@@ -87,7 +92,7 @@ class VAEController:
             for idx in range(num_batches):
                 batch = ds[idx * self.batch_size:(idx + 1) * self.batch_size]
                 obs = batch.astype(np.float) / 255.0
-                feed = {self.vae.x: obs,}
+                feed = {self.vae.x: obs, }
                 (train_loss, r_loss, kl_loss, train_step, _) = self.vae.sess.run([
                     self.vae.loss,
                     self.vae.r_loss,
