@@ -39,6 +39,21 @@ Script does the following:
 
 Implementation is still very very raw and needs fine tuning, so to get quick results i recommend to run full session and then reuse `vae.json` in new training session by adding `vae.load(PATH_MODEL_VAE)` before `ddpg.learn` and commenting out `vae.optimize()` in `ddpg_with_vae.py`. This will allow to train DDPG very quickly even on CPU machine.
 
+## Visualize what car sees
+
+Following code can be used to decode VAE's Z latent vector and save to image.
+
+```
+arr = vae.decode(obs)
+arr = np.round(arr).astype(np.uint8)
+arr = arr.reshape(80, 160, 3)
+# pip install Pillow
+img = PIL.Image.fromarray(arr)
+img.save('decoded_img.jpg')
+```
+
+Add this code in test section of `run.py`.
+
 # Credits
 
 - [wayve.ai](wayve.ai) for idea and inspiration.
