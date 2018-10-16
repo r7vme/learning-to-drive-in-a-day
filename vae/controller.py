@@ -81,7 +81,7 @@ class VAEController:
         return arr
 
     def optimize(self):
-        ds = self.buffer[:self.buffer_pos]
+        ds = self.buffer.copy()
         # TODO: may be do buffer reset.
         # self.buffer_reset()
 
