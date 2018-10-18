@@ -41,7 +41,7 @@ Script does the following:
 
 ## Disable VAE optimization
 
-Implementation is still very very raw and needs fine tuning, so to get quick results i recommend to run full session and then reuse `vae.json` in new training session by adding `vae.load(PATH_MODEL_VAE)` before `ddpg.learn` and commenting out `vae.optimize()` in `ddpg_with_vae.py`. This will allow to train DDPG very quickly even on CPU machine.
+Implementation is still very very raw and needs fine tuning, so to get quick results i recommend to run full session and then reuse `vae.json` (or use [pretrained](https://drive.google.com/open?id=16WYkH7goKnJM52ke1KAzs5vozGiuKPqu)) in new training session by adding `vae.load(PATH_MODEL_VAE)` before `ddpg.learn` and commenting out `vae.optimize()` in `ddpg_with_vae.py`. This will allow to train DDPG very quickly even on CPU machine.
 
 ## Visualize what car sees
 
