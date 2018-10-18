@@ -2,6 +2,8 @@
 
 DISCLAIMER: This repo is a boilerplate for the approach described in paper. It works in general, but not stable enough to reproduce good policy in 100% cases. I recommend to play with [pretrained VAE](#disable-vae-optimization) to get quicker results.
 
+![](content/example-after-3000-steps.gif)
+
 Code that implement approach similar to described in ["Learning to Drive in a Day"](https://arxiv.org/pdf/1807.00412.pdf) paper.
 
 Missing parts:
@@ -32,8 +34,8 @@ Script does the following:
 - Initialize VAE controller with random weights.
 - If no pretrained models found, run in train mode. Otherwise just load weights from files and run test.
 - Initialize DDPG controller.
-- Learning function will collect the data by running 5 episodes w/o optimization, then after every episode DDPG and VAE optimization happens.
-- After 1000 steps training will be finished and weights params will be saved to files.
+- Learning function will collect the data by running 10 episodes w/o DDPG optimization, then after every episode DDPG optimization happens. VAE optimized after every episode.
+- After 3000 steps training will be finished and weights params will be saved to files.
 
 # Troubleshooting
 
@@ -44,6 +46,10 @@ Implementation is still very very raw and needs fine tuning, so to get quick res
 ## Visualize what car sees
 
 Following code can be used to decode VAE's Z latent vector and save to image.
+
+## Try pretrained models
+
+Just to make sure that environment was setup correctly try [pretrained models](https://drive.google.com/open?id=16WYkH7goKnJM52ke1KAzs5vozGiuKPqu). Place `ddpg.pkl` and `vae.json` into the root directory and run `./run-in-docker.sh`. You should see similar to the GIF above.
 
 ```
 arr = vae.decode(obs)
