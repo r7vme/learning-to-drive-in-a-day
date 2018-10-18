@@ -4,7 +4,7 @@ DISCLAIMER: This repo is a boilerplate for the approach described in paper. It w
 
 ![](content/example-after-3000-steps.gif)
 
-Code that implement approach similar to described in ["Learning to Drive in a Day"](https://arxiv.org/pdf/1807.00412.pdf) paper.
+Code that implements approach similar to described in ["Learning to Drive in a Day"](https://arxiv.org/pdf/1807.00412.pdf) paper.
 
 Missing parts:
 - Prioritized Experience Replay in DDPG. Right now we randomly sample.
@@ -47,10 +47,6 @@ Implementation is still very very raw and needs fine tuning, so to get quick res
 
 Following code can be used to decode VAE's Z latent vector and save to image.
 
-## Try pretrained models
-
-Just to make sure that environment was setup correctly try [pretrained models](https://drive.google.com/open?id=16WYkH7goKnJM52ke1KAzs5vozGiuKPqu). Place `ddpg.pkl` and `vae.json` into the root directory and run `./run-in-docker.sh`. You should see similar to the GIF above.
-
 ```
 arr = vae.decode(obs)
 arr = np.round(arr).astype(np.uint8)
@@ -61,6 +57,10 @@ img.save('decoded_img.jpg')
 ```
 
 Add this code in test section of `run.py`.
+
+## Try pretrained models
+
+Just to make sure that environment was setup correctly try [pretrained models](https://drive.google.com/open?id=16WYkH7goKnJM52ke1KAzs5vozGiuKPqu). Place `ddpg.pkl` and `vae.json` into the root directory and run `./run-in-docker.sh`. You should see similar to the GIF above.
 
 # Credits
 
