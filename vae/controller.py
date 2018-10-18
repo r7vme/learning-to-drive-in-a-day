@@ -30,6 +30,7 @@ class VAEController:
         # Buffer
         self.buffer_size = buffer_size
         self.buffer_pos = -1
+        self.buffer_full = False
         self.buffer_reset()
 
         self.vae = ConvVAE(z_size=self.z_size,
@@ -51,15 +52,22 @@ class VAEController:
         self.buffer_pos += 1
         if self.buffer_pos > self.buffer_size - 1:
             self.buffer_pos = 0
+            self.buffer_full = True
         self.buffer[self.buffer_pos] = arr
 
     def buffer_reset(self):
         self.buffer_pos = -1
+        self.buffer_full = False
         self.buffer = np.zeros((self.buffer_size,
                                 self.image_size[0],
                                 self.image_size[1],
                                 self.image_size[2]),
                                dtype=np.uint8)
+
+    def buffer_get_copy(self):
+        if self.buffer_full:
+            return self.buffer.copy()
+        return self.buffer[:self.buffer_pos]
 
     def encode(self, arr):
         assert arr.shape == self.image_size
@@ -81,7 +89,7 @@ class VAEController:
         return arr
 
     def optimize(self):
-        ds = self.buffer.copy()
+        ds = self.buffer_get_copy()
         # TODO: may be do buffer reset.
         # self.buffer_reset()
 
