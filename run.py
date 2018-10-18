@@ -37,6 +37,7 @@ if os.path.exists(PATH_MODEL_DDPG + ".pkl") and \
     obs = env.reset()
     while True:
         action, _states = ddpg.predict(obs)
+        print(action)
         obs, reward, done, info = env.step(action)
         if done:
             env.reset()
@@ -60,10 +61,10 @@ else:
                 gamma=0.9,
                 param_noise=None,
                 action_noise=action_noise,
-                memory_limit=300,
-                nb_train_steps=1000,
+                memory_limit=10000,
+                nb_train_steps=3000,
                 )
-    ddpg.learn(total_timesteps=1000, vae=vae)
+    ddpg.learn(total_timesteps=3000, vae=vae, skip_episodes=10)
     # Finally save model files.
     ddpg.save(PATH_MODEL_DDPG)
     vae.save(PATH_MODEL_VAE)
