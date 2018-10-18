@@ -1,5 +1,7 @@
 # learning-to-drive-in-a-day
 
+DISCLAIMER: This repo is a boilerplate for the approach described in paper. It works in general, but not stable enough to reproduce good policy in 100% cases. I recommend to play with [pretrained VAE](#disable-vae-optimization) to get quicker results.
+
 Code that implement approach similar to described in ["Learning to Drive in a Day"](https://arxiv.org/pdf/1807.00412.pdf) paper.
 
 Missing parts:
