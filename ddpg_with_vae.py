@@ -88,10 +88,9 @@ class DDPGWithVAE(DDPG):
                 print("rollout finished")
 
                 # Train VAE.
-                if episodes > skip_episodes:
-                    train_start = time.time()
-                    vae.optimize()
-                    print("VAE training duration:", time.time() - train_start)
+                train_start = time.time()
+                vae.optimize()
+                print("VAE training duration:", time.time() - train_start)
 
                 # Train DDPG.
                 actor_losses = []
