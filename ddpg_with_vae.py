@@ -68,7 +68,9 @@ class DDPGWithVAE(DDPG):
                     episode_step += 1
 
                     # Book-keeping.
-                    self._store_transition(obs, action, reward, new_obs, done)
+                    # Do not record observations, while we skip DDPG training.
+                    if (episodes + 1) > skip_episodes:
+                        self._store_transition(obs, action, reward, new_obs, done)
                     obs = new_obs
                     if callback is not None:
                         callback(locals(), globals())
@@ -104,41 +106,41 @@ class DDPGWithVAE(DDPG):
                         self._update_target_net()
                     print("DDPG training duration:", time.time() - train_start)
 
-                mpi_size = MPI.COMM_WORLD.Get_size()
-                # Log stats.
-                # XXX shouldn't call np.mean on variable length lists
-                duration = time.time() - start_time
-                stats = self._get_stats()
-                combined_stats = stats.copy()
-                combined_stats['train/loss_actor'] = np.mean(actor_losses)
-                combined_stats['train/loss_critic'] = np.mean(critic_losses)
-                combined_stats['total/duration'] = duration
-                combined_stats['total/steps_per_second'] = float(step) / float(duration)
-                combined_stats['total/episodes'] = episodes
+                    mpi_size = MPI.COMM_WORLD.Get_size()
+                    # Log stats.
+                    # XXX shouldn't call np.mean on variable length lists
+                    duration = time.time() - start_time
+                    stats = self._get_stats()
+                    combined_stats = stats.copy()
+                    combined_stats['train/loss_actor'] = np.mean(actor_losses)
+                    combined_stats['train/loss_critic'] = np.mean(critic_losses)
+                    combined_stats['total/duration'] = duration
+                    combined_stats['total/steps_per_second'] = float(step) / float(duration)
+                    combined_stats['total/episodes'] = episodes
 
-                def as_scalar(scalar):
-                    """
-                    check and return the input if it is a scalar, otherwise raise ValueError
+                    def as_scalar(scalar):
+                        """
+                        check and return the input if it is a scalar, otherwise raise ValueError
 
-                    :param scalar: (Any) the object to check
-                    :return: (Number) the scalar if x is a scalar
-                    """
-                    if isinstance(scalar, np.ndarray):
-                        assert scalar.size == 1
-                        return scalar[0]
-                    elif np.isscalar(scalar):
-                        return scalar
-                    else:
-                        raise ValueError('expected scalar, got %s' % scalar)
+                        :param scalar: (Any) the object to check
+                        :return: (Number) the scalar if x is a scalar
+                        """
+                        if isinstance(scalar, np.ndarray):
+                            assert scalar.size == 1
+                            return scalar[0]
+                        elif np.isscalar(scalar):
+                            return scalar
+                        else:
+                            raise ValueError('expected scalar, got %s' % scalar)
 
-                combined_stats_sums = MPI.COMM_WORLD.allreduce(
-                    np.array([as_scalar(x) for x in combined_stats.values()]))
-                combined_stats = {k: v / mpi_size for (k, v) in zip(combined_stats.keys(), combined_stats_sums)}
+                    combined_stats_sums = MPI.COMM_WORLD.allreduce(
+                        np.array([as_scalar(x) for x in combined_stats.values()]))
+                    combined_stats = {k: v / mpi_size for (k, v) in zip(combined_stats.keys(), combined_stats_sums)}
 
-                # Total statistics.
-                combined_stats['total/steps'] = step
+                    # Total statistics.
+                    combined_stats['total/steps'] = step
 
-                for key in sorted(combined_stats.keys()):
-                    logger.record_tabular(key, combined_stats[key])
-                logger.dump_tabular()
-                logger.info('')
+                    for key in sorted(combined_stats.keys()):
+                        logger.record_tabular(key, combined_stats[key])
+                    logger.dump_tabular()
+                    logger.info('')
