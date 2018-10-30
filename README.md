@@ -4,6 +4,8 @@ DISCLAIMER: This repo is a boilerplate for the approach described in paper. It w
 
 ![](content/example-after-3000-steps.gif)
 
+Video with [real RC car](https://www.youtube.com/watch?v=6JUjDw9tfD4).
+
 Code that implements approach similar to described in ["Learning to Drive in a Day"](https://arxiv.org/pdf/1807.00412.pdf) paper.
 
 Missing parts:
