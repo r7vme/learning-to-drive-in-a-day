@@ -64,7 +64,8 @@ else:
                 memory_limit=10000,
                 nb_train_steps=3000,
                 )
-    ddpg.learn(total_timesteps=3000, vae=vae, skip_episodes=10)
+    vae.load(PATH_MODEL_VAE)
+    ddpg.learn(total_timesteps=1000, vae=vae, skip_episodes=0)
     # Finally save model files.
     ddpg.save(PATH_MODEL_DDPG)
     vae.save(PATH_MODEL_VAE)
